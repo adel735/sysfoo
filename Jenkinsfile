@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools {
-        maven 'Maven 3.9.6' // Specify your Maven installation name
+        maven 'maven' // Specify your Maven installation name
     }
 
     stages {
