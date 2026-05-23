@@ -1,30 +1,34 @@
 pipeline {
-    agent any
-    tools {
-        maven 'maven' // Specify your Maven installation name
+  agent any
+  stages {
+    stage('Build') {
+      steps {
+        echo 'Building...'
+        sh 'mvn compile'
+      }
     }
 
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building...'
-                sh 'mvn compile'
-                // Add your build commands here
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                sh 'mvn clean test'                
-                // Add your test commands here
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                sh 'mvn package -DskipTests'
-                // Add your deploy commands here
-            }
-        }
+    stage('Test') {
+      steps {
+        echo 'Testing...'
+        sh 'mvn clean test'
+      }
     }
+
+    stage('Deploy') {
+      steps {
+        echo 'Deploying...'
+        sh '''GIT_SHORT_COMMIT=$(echo $GIT_COMMIT | cut -c 1-7)
+
+mvn versions:set -DnewVersion="$GIT_SHORT_COMMIT"
+mvn versions:commit'''
+        sh 'mvn package -DskipTests'
+        archiveArtifacts '**/target/*.jar'
+      }
+    }
+
+  }
+  tools {
+    maven 'maven'
+  }
 }
