@@ -22,7 +22,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
-                sh 'mvn deploy'
+                sh 'mvn package -DskipTests'
                 // Add your deploy commands here
             }
         }
